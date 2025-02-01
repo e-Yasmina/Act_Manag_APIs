@@ -1,14 +1,19 @@
-const express = require('express');
+const express = require("express");
 const cors = require("cors");
+
 const app = express();
 const PORT = 3000;
 
-// Middleware to parse JSON bodies
-//app.use(express.json());
 
-// Enable CORS for all routes
-app.use(cors());
+// Allow specific origins
+const corsOptions = {
+  origin: ["http://localhost:3000", "https://your-frontend-domain.com"], // Add your frontend URL here
+  methods: "GET,POST,PUT,DELETE",
+  allowedHeaders: "Content-Type,Authorization",
+};
 
+app.use(cors(corsOptions));
+app.use(express.json()); // Ensure request body parsing
 // In-memory storage for first name and last name
 let users = [];
 
@@ -20,7 +25,6 @@ app.get('/', (req, res) => {
 // Route to store a user's first name and last name
 app.post('/user', (req, res) => {
   const { firstName, lastName } = req.body;
-
   // if (!firstName || !lastName) {
   //   return res.status(400).json({ error: 'First name and last name are required' });
   // }
@@ -34,7 +38,7 @@ app.post('/user', (req, res) => {
 app.get('/users', (req, res) => {
   //res.status(200).json(users);
   if (users.length === 0) {
-    return res.status(200).json('No student loged in yet.s');
+    return res.status(200).json("No student logged in yet.");
   }else{
     return res.status(200).json(users);
   }
