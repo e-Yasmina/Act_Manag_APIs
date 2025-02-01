@@ -7,7 +7,7 @@ const PORT = 3000;
 
 // Allow specific origins
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://your-frontend-domain.com"], // Add your frontend URL here
+  origin: ["http://localhost:3000", "https://e-yasmina.github.io"], // Add your frontend URL here
   methods: "GET,POST,PUT,DELETE",
   allowedHeaders: "Content-Type,Authorization",
 };
