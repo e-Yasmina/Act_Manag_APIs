@@ -1,7 +1,7 @@
 const express = require('express');
 //const cors = require("cors");
 const app = express();
-const PORT = 4000;
+const PORT = 3000;
 
 // Middleware to parse JSON bodies
 //app.use(express.json());
@@ -32,7 +32,12 @@ app.post('/user', (req, res) => {
 
 // Route to get the stored users
 app.get('/users', (req, res) => {
-  res.status(200).json(users);
+  //res.status(200).json(users);
+  if (users.length === 0) {
+    return res.status(200).json('No student loged in yet.s');
+  }else{
+    return res.status(200).json(users);
+  }
 });
 
 app.listen(PORT, () => {
