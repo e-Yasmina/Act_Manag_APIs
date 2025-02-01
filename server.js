@@ -1,5 +1,5 @@
 const express = require('express');
-//const cors = require("cors");
+const cors = require("cors");
 const app = express();
 const PORT = 3000;
 
@@ -7,7 +7,7 @@ const PORT = 3000;
 //app.use(express.json());
 
 // Enable CORS for all routes
-//app.use(cors());
+app.use(cors());
 
 // In-memory storage for first name and last name
 let users = [];
