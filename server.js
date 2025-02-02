@@ -23,16 +23,32 @@ app.get('/', (req, res) => {
 });
 
 // Route to store a user's first name and last name
-app.post('/user', (req, res) => {
-  const { firstName, lastName } = req.body;
-  // if (!firstName || !lastName) {
-  //   return res.status(400).json({ error: 'First name and last name are required' });
-  // }
-  const newUser = { firstName, lastName };
-  users.push(newUser);
+// app.post('/user', (req, res) => {
+//   const { firstName, lastName } = req.body;
+//   // if (!firstName || !lastName) {
+//   //   return res.status(400).json({ error: 'First name and last name are required' });
+//   // }
+//   const newUser = { firstName, lastName };
+//   users.push(newUser);
 
-  res.status(201).json(newUser);
+//   res.status(201).json(newUser);
+// });
+app.post('/user', (req, res) => {
+  console.log("Received body:", req.body); // Add this line
+
+  try {
+      const { firstName, lastName } = req.body; // Check if req.body exists
+      if (!firstName || !lastName) {
+          return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      res.status(201).json({ message: "User created successfully!" });
+  } catch (error) {
+      console.error("Server Error:", error);
+      res.status(500).json({ error: error.message });
+  }
 });
+
 
 // Route to get the stored users
 app.get('/users', (req, res) => {
