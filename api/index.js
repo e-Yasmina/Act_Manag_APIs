@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
-const PORT = 4000;
+const PORT = 3000;
 const bodyParser = require('body-parser')
 
 // Allow specific origins
@@ -59,4 +59,7 @@ app.listen(PORT, () => {
 });
 
 // Export the app to Vercel
-module.exports = app;
+//module.exports = app;
+module.exports = (req, res) => {
+  app(req, res);
+};
