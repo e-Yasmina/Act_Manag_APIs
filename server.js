@@ -14,6 +14,8 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json()); // Ensure request body parsing
+app.use(express.urlencoded({ extended: true })); 
+
 // In-memory storage for first name and last name
 let users = [];
 
