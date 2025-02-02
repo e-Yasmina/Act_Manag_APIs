@@ -1,6 +1,5 @@
 .vercel
 node_modules
-index.js
 dist/
 build/
 .env
