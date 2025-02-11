@@ -19,8 +19,8 @@ app.use(bodyParser.json()) // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }))
 
 // In-memory storage for first name and last name
-let users = [];
-
+//let users = [];
+const users = new Set();
 
 app.get('/', (req, res) => {
   res.status(200).json('Welcome, your app is working well');
@@ -29,14 +29,21 @@ app.get('/', (req, res) => {
 // Route to create a new user
 app.post('/user', (req, res) => {
   console.log("Received body:", req.body); // Add this line
-
   try {
-      const { firstName, lastName } = req.body; // Check if req.body exists
+      const { firstName, lastName} = req.body; // Check if req.body exists
       if (!firstName || !lastName) {
           return res.status(400).json({ error: "Missing required fields" });
       }
+      const userKey = `${firstName.toLowerCase()}-${lastName.toLowerCase()}`;
 
-      res.status(201).json({ message: "User created successfully!" });
+        if (users.has(userKey)) {
+            return res.status(409).json({ error: "User already exists!", userKey  });
+        }
+
+      res.status(201).json({ message: "User created successfully!", userKey  });
+      users.set(userKey, { firstName, lastName, score: [], time: []});
+      //users.add(userKey);
+      //users.push({ firstName, lastName , score: 0 , time: 0});
   } catch (error) {
       console.error("Server Error:", error);
       res.status(500).json({ error: error.message });
@@ -53,6 +60,61 @@ app.get('/users', (req, res) => {
     return res.status(200).json(users);
   }
 });
+
+// Route to get a specific user
+app.get('/user/:userKey', (req, res) => {
+  const { userKey } = req.params; // Extract userKey from URL parameter
+
+  if (!users.has(userKey)) {
+      return res.status(404).json({ error: "User not found!" });
+  }
+
+  return res.status(200).json(users.get(userKey)); // Return the user object
+});
+
+
+// Route to update the time array of a user
+app.put('/user/:userKey/time', (req, res) => {
+  const { userKey } = req.params;
+  const { time } = req.body;
+
+  if (!users.has(userKey)) {
+      return res.status(404).json({ error: "User not found!" });
+  }
+
+  const user = users.get(userKey);
+
+  if (!Array.isArray(score) || !Array.isArray(time)) {
+      return res.status(400).json({ error: "Time must be array!" });
+  }
+  user.time.push(...time);
+
+  users.set(userKey, user); // Ensure the updated user is stored
+
+  return res.status(200).json({ message: "Time updated successfully!", user });
+});
+
+// Route to update the score array of a user
+app.put('/user/:userKey/score', (req, res) => {
+  const { userKey } = req.params;
+  const { score } = req.body;
+
+  if (!users.has(userKey)) {
+      return res.status(404).json({ error: "User not found!" });
+  }
+
+  const user = users.get(userKey);
+
+  if (!Array.isArray(score)) {
+      return res.status(400).json({ error: "Score must be an array!" });
+  }
+
+  user.score.push(...score);
+  users.set(userKey, user); // Ensure the updated user is stored
+
+  return res.status(200).json({ message: "Score updated successfully!", user });
+});
+
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
