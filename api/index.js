@@ -41,7 +41,7 @@ app.post('/user', (req, res) => {
         }
 
       res.status(201).json({ message: "User created successfully!", userKey  });
-      users.set(userKey, { firstName, lastName, score: [], time: []});
+      users.set(userKey, { firstName, lastName, score: [], time: [], liveActivity:"" });
       //users.add(userKey);
       //users.push({ firstName, lastName , score: 0 , time: 0});
   } catch (error) {
@@ -49,6 +49,7 @@ app.post('/user', (req, res) => {
       res.status(500).json({ error: error.message });
   }
 });
+
 
 
 // Route to get the stored users
@@ -113,6 +114,22 @@ app.put('/user/:userKey/score', (req, res) => {
   users.set(userKey, user); // Ensure the updated user is stored
 
   return res.status(200).json({ message: "Score updated successfully!", user });
+});
+
+app.put('/user/:userKey/activity', (req, res) => {
+  const { userKey } = req.params;
+  const { liveActivityId } = req.body;
+
+  if (!users.has(userKey)) {
+      return res.status(404).json({ error: "User not found!" });
+  }
+
+  const user = users.get(userKey);
+
+  user.liveActivity = liveActivityId;
+  users.set(userKey, user); // Ensure the updated user is stored
+
+  return res.status(200).json({ message: `Activity ${liveActivityId} is live`, user });
 });
 
 
