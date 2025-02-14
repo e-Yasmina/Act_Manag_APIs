@@ -15,8 +15,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json()); // Ensure request body parsing
 app.use(express.urlencoded({ extended: true })); 
-app.use(bodyParser.json()) // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // In-memory storage for first name and last name
 //let users = [];
@@ -77,20 +77,20 @@ app.get('/user/:userKey', (req, res) => {
 // Route to update the time array of a user
 app.put('/user/:userKey/time', (req, res) => {
   const { userKey } = req.params;
-  const { time } = req.body;
+  const { activityId, timeSpent } = req.body; // Expecting a single entry
 
   if (!users.has(userKey)) {
       return res.status(404).json({ error: "User not found!" });
   }
 
-  const user = users.get(userKey);
-
-  if (!Array.isArray(score) || !Array.isArray(time)) {
-      return res.status(400).json({ error: "Time must be array!" });
+  if (!activityId || !timeSpent) {
+      return res.status(400).json({ error: "activityId and timeSpent are required!" });
   }
-  user.time.push(...time);
 
-  users.set(userKey, user); // Ensure the updated user is stored
+  const user = users.get(userKey);
+  user.time.push({ activityId, timeSpent }); // Storing time entry as an object
+
+  users.set(userKey, user); // Save the updated user object
 
   return res.status(200).json({ message: "Time updated successfully!", user });
 });
@@ -137,7 +137,7 @@ app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
 
-// Export the app to Vercel
+//Export the app to Vercel
 //module.exports = app;
 module.exports = (req, res) => {
   app(req, res);
